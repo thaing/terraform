@@ -31,3 +31,7 @@ terraform.rc
 
 # Planning artifacts
 .planning/
+
+# graphify knowledge graph output
+.graphify_python
+graphify-out/
