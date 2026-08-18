@@ -1,0 +1,2 @@
+project = "multicloud-tf"
+region  = "us-east-1"
