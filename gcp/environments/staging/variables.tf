@@ -58,3 +58,29 @@ variable "gcp_project_id" {
     error_message = "gcp_project_id must be a valid GCP project ID: 6-30 lowercase letters, digits, or hyphens, starting with a letter."
   }
 }
+
+variable "public_key_openssh" {
+  description = "Public SSH key in OpenSSH format. Format for GCP: 'user@host:ssh-rsa AAAA...' (username prefix required by GCP metadata.ssh-keys)"
+  type        = string
+}
+
+variable "storage_bucket_name" {
+  description = "GCS bucket name. Must be 3-63 lowercase alphanumeric, dots, hyphens. Pattern: multicloud-tf-{env}-gcp-storage"
+  type        = string
+
+  validation {
+    condition     = can(regex("^[a-z][a-z0-9.-]{1,61}[a-z0-9]$", var.storage_bucket_name))
+    error_message = "storage_bucket_name must be 3-63 lowercase alphanumeric, dots, or hyphens."
+  }
+}
+
+variable "size" {
+  description = "Instance size tier (per D-27: only small creates resources)"
+  type        = string
+  default     = "small"
+
+  validation {
+    condition     = contains(["small", "medium", "large"], var.size)
+    error_message = "Size must be one of: small, medium, large."
+  }
+}
