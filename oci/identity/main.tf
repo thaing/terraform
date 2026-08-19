@@ -1,7 +1,5 @@
 provider "oci" {
-  region              = var.region
-  auth                = "ConfigFile"
-  config_file_profile = "DEFAULT"
+  region = var.region
 }
 
 locals {
