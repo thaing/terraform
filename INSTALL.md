@@ -400,18 +400,8 @@ compartment_id = "ocid1.compartment.oc1..aaaa..."   # your root tenancy compartm
 namespace      = "your-namespace"                     # from Object Storage settings
 EOF
 
-# The OCI provider reads credentials from ~/. oci/config automatically
-# (auth = "ConfigFile" in provider block). Make sure ~/.oci/config exists first.
-
-tofu init
-tofu plan      # Should now authenticate successfully
-tofu apply
-```
-
-**Note:** Unlike AWS/GCP, OCI's provider does NOT auto-discover credentials. The provider block uses `auth = "ConfigFile"` to explicitly read from `~/.oci/config`. If you see "bad configuration" errors, verify your config file exists and has the correct format.
-
-```bash
-cd oci/identity
+# The OCI provider reads credentials from ~/.oci/config automatically.
+# Make sure ~/.oci/config exists first with your API key.
 
 cat > terraform.tfvars << 'EOF'
 project    = "multicloud-tf"
