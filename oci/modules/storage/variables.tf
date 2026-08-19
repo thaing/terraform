@@ -33,3 +33,8 @@ variable "bucket_name" {
     error_message = "Bucket name must start and end with lowercase alphanumeric, contain only lowercase alphanumeric, dots, and hyphens, and be 3-63 characters."
   }
 }
+
+variable "compartment_id" {
+  description = "OCI compartment OCID for the bucket"
+  type        = string
+}

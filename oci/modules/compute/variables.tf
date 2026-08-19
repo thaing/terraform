@@ -38,3 +38,23 @@ variable "subnet_id" {
   description = "Subnet/network where the instance is placed"
   type        = string
 }
+
+variable "public_key_openssh" {
+  description = "Public SSH key in OpenSSH format (ssh-rsa AAAA... user@host)"
+  type        = string
+}
+
+variable "image_id" {
+  description = "OCI platform image OCID for the compute instance (Ubuntu 22.04 for the configured region)"
+  type        = string
+}
+
+variable "availability_domain" {
+  description = "OCI availability domain for the instance"
+  type        = string
+}
+
+variable "compartment_id" {
+  description = "OCI compartment OCID for the instance"
+  type        = string
+}
