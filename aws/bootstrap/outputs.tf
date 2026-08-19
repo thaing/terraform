@@ -1,9 +1,9 @@
-output "state_bucket_names" {
-  description = "Map of environment name to state bucket name"
-  value       = { for k, v in module.state_bucket : k => v.bucket_name }
+output "state_bucket_name" {
+  description = "State bucket name for the environment"
+  value       = module.state_bucket.bucket_name
 }
 
-output "state_bucket_arns" {
-  description = "Map of environment name to state bucket ARN"
-  value       = { for k, v in module.state_bucket : k => v.bucket_arn }
+output "state_bucket_arn" {
+  description = "State bucket ARN for the environment"
+  value       = module.state_bucket.bucket_arn
 }
