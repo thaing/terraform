@@ -38,3 +38,24 @@ variable "subnet_id" {
   description = "Subnet/network where the instance is placed"
   type        = string
 }
+
+variable "public_key_openssh" {
+  description = "Public SSH key in OpenSSH format (ssh-rsa AAAA... user@host)"
+  type        = string
+}
+
+variable "security_group_id" {
+  description = "ID of the VPC security group for the instance"
+  type        = string
+}
+
+variable "region" {
+  description = "AWS region for AMI lookup"
+  type        = string
+}
+
+variable "image_id" {
+  description = "AMI ID override. When null, uses latest Ubuntu 22.04 from Canonical via data source (per D-28)"
+  type        = string
+  default     = null
+}
