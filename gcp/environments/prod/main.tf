@@ -22,15 +22,15 @@ module "networking" {
 }
 
 module "compute" {
-  source            = "../../modules/compute"
-  project           = var.project
-  environment       = var.environment
-  tags              = local.common_tags
-  size              = var.size
-  subnet_id         = module.networking.public_subnet_id
+  source             = "../../modules/compute"
+  project            = var.project
+  environment        = var.environment
+  tags               = local.common_tags
+  size               = var.size
+  subnet_id          = module.networking.public_subnet_id
   public_key_openssh = var.public_key_openssh
-  region            = var.region
-  image             = "debian-cloud/debian-12"
+  region             = var.region
+  image              = "debian-cloud/debian-12"
 }
 
 module "storage" {
