@@ -341,7 +341,7 @@ oci setup config
 # Prompts for:
 #   Tenancy OCID:     (from console → Administration → Tenancy details)
 #   User OCID:         (from console → Identity → Users → your user)
-#   Region:            ap-tokyo-1 (or your preferred region)
+#   Region:            us-phoenix-1 (or your preferred region)
 #   Fingerprint:       (from API key fingerprint)
 #   Key file path:     ~/.oci/oci_api_key.pem
 ```
@@ -356,7 +356,7 @@ tenancy = ocid1.tenancy.oc1..aaaa...
 user = ocid1.user.oc1..aaaa...
 fingerprint = aa:bb:cc:dd:...
 key_file = ~/.oci/oci_api_key.pem
-region = ap-tokyo-1
+region = us-phoenix-1
 ```
 
 **Where to get these values:**
@@ -392,7 +392,7 @@ cd oci/bootstrap
 
 cat > terraform.tfvars << 'EOF'
 project        = "multicloud-tf"
-region         = "us-sanjose-1"
+region         = "us-phoenix-1"
 compartment_id = "ocid1.compartment.oc1..aaaa..."   # your root tenancy compartment
 namespace      = "your-namespace"                     # from Object Storage settings
 EOF
@@ -412,7 +412,7 @@ cd oci/identity
 
 cat > terraform.tfvars << 'EOF'
 project    = "multicloud-tf"
-region     = "us-sanjose-1"
+region     = "us-phoenix-1"
 tenancy_id = "ocid1.tenancy.oc1..aaaa..."
 EOF
 
@@ -430,9 +430,9 @@ cd oci/environments/dev
 
 cat > terraform.tfvars << 'EOF'
 project            = "multicloud-tf"
-region             = "us-sanjose-1"
+region             = "us-phoenix-1"
 cidr_block         = "10.2.0.0/16"
-availability_domain = "IJuK:US-SANJOSE-1-AD-1"
+availability_domain = "IJuK:US-PHOENIX-1-AD-1"
 ssh_source_cidr    = "<YOUR_IP>/32"
 compartment_id     = "ocid1.compartment.oc1..aaaa..."   # from identity output
 size               = "small"
