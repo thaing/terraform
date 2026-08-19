@@ -1,4 +1,5 @@
 project        = "multicloud-tf"
-region         = "ap-tokyo-1"
+region         = "us-phoenix-1"
+environment    = "dev"
 compartment_id = "<your-compartment-ocid>"
 namespace      = "<your-object-storage-namespace>"

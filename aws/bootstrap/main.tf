@@ -10,9 +10,8 @@ locals {
 }
 
 module "state_bucket" {
-  source   = "./modules/state_bucket"
-  for_each = toset(var.environments)
+  source = "./modules/state_bucket"
 
-  name = "${var.project}-${each.key}-aws-state"
-  tags = merge(local.common_tags, { environment = each.key })
+  name = "${var.project}-${var.environment}-aws-state"
+  tags = merge(local.common_tags, { environment = var.environment })
 }
