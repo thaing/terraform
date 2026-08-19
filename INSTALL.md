@@ -403,6 +403,16 @@ EOF
 # The OCI provider reads credentials from ~/.oci/config automatically.
 # Make sure ~/.oci/config exists first with your API key.
 
+tofu init
+tofu plan
+tofu apply
+```
+
+### Step 3: Create IAM Identity
+
+```bash
+cd oci/identity
+
 cat > terraform.tfvars << 'EOF'
 project    = "multicloud-tf"
 region     = "us-phoenix-1"
