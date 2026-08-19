@@ -116,8 +116,9 @@ cd aws/bootstrap
 
 # Create terraform.tfvars (gitignored)
 cat > terraform.tfvars << 'EOF'
-project = "multicloud-tf"
-region  = "us-east-1"
+project     = "multicloud-tf"
+region      = "us-east-1"
+environment = "dev"
 EOF
 
 # Initialize and apply
@@ -256,9 +257,10 @@ export GOOGLE_APPLICATION_CREDENTIALS="$(pwd)/key.json"
 cd gcp/bootstrap
 
 cat > terraform.tfvars << 'EOF'
-project = "multicloud-tf"
-region  = "us-central1"
+project     = "multicloud-tf"
 gcp_project_id = "your-gcp-project-id"
+region      = "us-central1"
+environment = "dev"
 EOF
 
 tofu init
@@ -393,6 +395,7 @@ cd oci/bootstrap
 cat > terraform.tfvars << 'EOF'
 project        = "multicloud-tf"
 region         = "us-phoenix-1"
+environment    = "dev"
 compartment_id = "ocid1.compartment.oc1..aaaa..."   # your root tenancy compartment
 namespace      = "your-namespace"                     # from Object Storage settings
 EOF
@@ -542,7 +545,9 @@ cd aws/environments/dev && tofu destroy
 cd aws/identity && tofu destroy
 
 # Bootstrap (destroys state bucket — DO THIS LAST)
-cd aws/bootstrap && tofu destroy
+cd aws/bootstrap && tofu destroy -var="environment=prod"
+cd aws/bootstrap && tofu destroy -var="environment=staging"
+cd aws/bootstrap && tofu destroy -var="environment=dev"
 ```
 
 Repeat for `gcp/` and `oci/`.
