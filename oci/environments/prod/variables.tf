@@ -28,3 +28,33 @@ variable "region" {
   description = "Cloud provider region for resource deployment"
   type        = string
 }
+
+variable "cidr_block" {
+  description = "CIDR block for the VCN (10.2.0.0/16)"
+  type        = string
+
+  validation {
+    condition     = can(cidrhost(var.cidr_block, 0))
+    error_message = "CIDR block must be valid IPv4 CIDR notation, e.g. 10.0.0.0/16."
+  }
+}
+
+variable "ssh_source_cidr" {
+  description = "CIDR allowed to SSH (port 22). REQUIRED — never 0.0.0.0/0."
+  type        = string
+
+  validation {
+    condition     = can(cidrhost(var.ssh_source_cidr, 0))
+    error_message = "ssh_source_cidr must be valid IPv4 CIDR notation, e.g. 203.0.113.7/32."
+  }
+}
+
+variable "availability_domain" {
+  description = "OCI availability domain for subnets (single AD per D-20)"
+  type        = string
+}
+
+variable "compartment_id" {
+  description = "OCI compartment OCID for the VCN (project compartment from oci/identity/ apply, or root compartment during config-only)"
+  type        = string
+}
