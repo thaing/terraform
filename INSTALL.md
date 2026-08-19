@@ -391,23 +391,28 @@ Allow group <your-group> to manage compartment in tenancy
 cd oci/bootstrap
 
 cat > terraform.tfvars << 'EOF'
-project = "multicloud-tf"
-region  = "ap-tokyo-1"
+project        = "multicloud-tf"
+region         = "us-sanjose-1"
+compartment_id = "ocid1.compartment.oc1..aaaa..."   # your root tenancy compartment
+namespace      = "your-namespace"                     # from Object Storage settings
 EOF
 
+# The OCI provider reads credentials from ~/. oci/config automatically
+# (auth = "ConfigFile" in provider block). Make sure ~/.oci/config exists first.
+
 tofu init
-tofu plan
+tofu plan      # Should now authenticate successfully
 tofu apply
 ```
 
-### Step 3: Create IAM Identity
+**Note:** Unlike AWS/GCP, OCI's provider does NOT auto-discover credentials. The provider block uses `auth = "ConfigFile"` to explicitly read from `~/.oci/config`. If you see "bad configuration" errors, verify your config file exists and has the correct format.
 
 ```bash
 cd oci/identity
 
 cat > terraform.tfvars << 'EOF'
 project    = "multicloud-tf"
-region     = "ap-tokyo-1"
+region     = "us-sanjose-1"
 tenancy_id = "ocid1.tenancy.oc1..aaaa..."
 EOF
 
@@ -425,9 +430,9 @@ cd oci/environments/dev
 
 cat > terraform.tfvars << 'EOF'
 project            = "multicloud-tf"
-region             = "ap-tokyo-1"
+region             = "us-sanjose-1"
 cidr_block         = "10.2.0.0/16"
-availability_domain = "IJuK:AP-TOKYO-1-AD-1"
+availability_domain = "IJuK:US-SANJOSE-1-AD-1"
 ssh_source_cidr    = "<YOUR_IP>/32"
 compartment_id     = "ocid1.compartment.oc1..aaaa..."   # from identity output
 size               = "small"
