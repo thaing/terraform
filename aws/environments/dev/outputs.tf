@@ -17,3 +17,35 @@ output "security_group_id" {
   description = "ID of the public security group"
   value       = module.networking.security_group_id
 }
+
+# Compute outputs
+output "instance_id" {
+  description = "ID of the compute instance"
+  value       = module.compute.instance_id
+}
+
+output "instance_public_ip" {
+  description = "Public IP of the compute instance"
+  value       = module.compute.public_ip
+}
+
+output "instance_private_ip" {
+  description = "Private IP of the compute instance"
+  value       = module.compute.private_ip
+}
+
+# Storage outputs
+output "storage_bucket_id" {
+  description = "ID of the S3 storage bucket"
+  value       = module.storage.bucket_id
+}
+
+output "storage_bucket_name" {
+  description = "Name of the S3 storage bucket"
+  value       = module.storage.bucket_name
+}
+
+output "storage_bucket_arn" {
+  description = "ARN of the S3 storage bucket"
+  value       = module.storage.bucket_arn
+}
