@@ -58,3 +58,34 @@ variable "compartment_id" {
   description = "OCI compartment OCID for the VCN (project compartment from oci/identity/ apply, or root compartment during config-only)"
   type        = string
 }
+
+variable "public_key_openssh" {
+  description = "Public SSH key in OpenSSH format (ssh-rsa AAAA... user@host). REQUIRED — never leave empty."
+  type        = string
+}
+
+variable "storage_bucket_name" {
+  description = "OCI Object Storage bucket name. Must be 3-63 lowercase alphanumeric, dots, hyphens. Pattern: multicloud-tf-{env}-oci-storage"
+  type        = string
+
+  validation {
+    condition     = can(regex("^[a-z][a-z0-9.-]{1,61}[a-z0-9]$", var.storage_bucket_name))
+    error_message = "Bucket name must start and end with lowercase alphanumeric, contain only lowercase alphanumeric, dots, and hyphens, and be 3-63 characters."
+  }
+}
+
+variable "size" {
+  description = "Instance size tier (per D-27: only small creates resources)"
+  type        = string
+  default     = "small"
+
+  validation {
+    condition     = contains(["small", "medium", "large"], var.size)
+    error_message = "Size must be one of: small, medium, large."
+  }
+}
+
+variable "image_id" {
+  description = "OCI platform image OCID for the compute instance (Ubuntu 22.04 for your region)"
+  type        = string
+}

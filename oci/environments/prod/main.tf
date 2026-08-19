@@ -20,3 +20,25 @@ module "networking" {
   compartment_id      = var.compartment_id
   tags                = local.common_tags
 }
+
+module "compute" {
+  source              = "../../modules/compute"
+  project             = var.project
+  environment         = var.environment
+  tags                = local.common_tags
+  size                = var.size
+  subnet_id           = module.networking.public_subnet_id
+  public_key_openssh  = var.public_key_openssh
+  availability_domain = var.availability_domain
+  compartment_id      = var.compartment_id
+  image_id            = var.image_id
+}
+
+module "storage" {
+  source         = "../../modules/storage"
+  project        = var.project
+  environment    = var.environment
+  tags           = local.common_tags
+  bucket_name    = var.storage_bucket_name
+  compartment_id = var.compartment_id
+}
