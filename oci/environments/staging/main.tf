@@ -32,6 +32,7 @@ module "compute" {
   availability_domain = var.availability_domain
   compartment_id      = var.compartment_id
   image_id            = var.image_id
+  second_volume_size_gb  = 50
 }
 
 module "storage" {
