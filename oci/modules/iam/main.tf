@@ -19,12 +19,12 @@ resource "oci_identity_group" "project" {
 }
 
 resource "oci_identity_policy" "project" {
-  compartment_id = oci_identity_compartment.project.id
+  compartment_id = var.tenancy_id
   name           = "${var.project}-oci-policy"
   description    = "Least-privilege project access (D-23)"
   statements = [
     "Allow group ${oci_identity_group.project.name} to manage virtual-network-family in compartment ${oci_identity_compartment.project.name}",
-    "Allow group ${oci_identity_group.project.name} to use instance-family in compartment ${oci_identity_compartment.project.name}",
+    "Allow group ${oci_identity_group.project.name} to manage instance-family in compartment ${oci_identity_compartment.project.name}",
     "Allow group ${oci_identity_group.project.name} to manage volume-family in compartment ${oci_identity_compartment.project.name}",
     "Allow group ${oci_identity_group.project.name} to manage object-family in compartment ${oci_identity_compartment.project.name}",
   ]
