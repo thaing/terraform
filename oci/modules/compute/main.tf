@@ -59,12 +59,12 @@ resource "oci_core_instance" "main" {
 # Second block volume (optional) - OCI Always Free tier includes 200 GB total
 # prevent_destroy = true ensures volume persists if instance is terminated from console
 resource "oci_core_volume" "second" {
-  count                = local.create_second_volume ? 1 : 0
-  availability_domain  = var.availability_domain
-  compartment_id       = var.compartment_id
-  display_name         = "${var.project}-${var.environment}-volume-2"
-  size_in_gbs          = var.second_volume_size_gb
-  freeform_tags        = local.common_tags
+  count               = local.create_second_volume ? 1 : 0
+  availability_domain = var.availability_domain
+  compartment_id      = var.compartment_id
+  display_name        = "${var.project}-${var.environment}-volume-2"
+  size_in_gbs         = var.second_volume_size_gb
+  freeform_tags       = local.common_tags
 
   lifecycle {
     prevent_destroy = true
@@ -73,9 +73,9 @@ resource "oci_core_volume" "second" {
 
 # Attach second volume to instance
 resource "oci_core_volume_attachment" "second" {
-  count              = local.create_second_volume ? 1 : 0
-  instance_id        = oci_core_instance.main.id
-  volume_id          = oci_core_volume.second[0].id
-  attachment_type    = "paravirtualized"
-  display_name       = "${var.project}-${var.environment}-volume-2-attachment"
+  count           = local.create_second_volume ? 1 : 0
+  instance_id     = oci_core_instance.main.id
+  volume_id       = oci_core_volume.second[0].id
+  attachment_type = "paravirtualized"
+  display_name    = "${var.project}-${var.environment}-volume-2-attachment"
 }

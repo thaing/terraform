@@ -8,16 +8,6 @@ variable "project" {
   }
 }
 
-variable "environment" {
-  description = "Deployment environment name"
-  type        = string
-  default     = "dev"
-
-  validation {
-    condition     = contains(["dev", "staging", "prod"], var.environment)
-    error_message = "Environment must be one of: dev, staging, prod."
-  }
-}
 
 variable "region" {
   description = "AWS region for the S3 state buckets"

@@ -13,7 +13,7 @@ locals {
 module "state_bucket" {
   source = "./modules/state_bucket"
 
-  name     = "${var.project}-${var.environment}-gcp-state-${var.gcp_project_id}"
+  name     = "${var.project}-gcp-state-${var.gcp_project_id}"
   location = var.region
-  tags     = merge(local.common_tags, { environment = var.environment })
+  tags     = local.common_tags
 }

@@ -32,9 +32,9 @@ A learning-focused but production-grade Terraform project managing infrastructur
 ### Remote State Backends
 | Cloud | Backend Type | Locking | State Bucket Pattern | Free Tier Impact |
 |-------|-------------|---------|---------------------|-----------------|
-| **AWS** | `s3` | `use_lockfile = true` (S3 native, no DynamoDB) | `s3://tf-state-{env}-aws/` | S3 storage for state files: pennies/month. DynamoDB locking deprecated — use `use_lockfile`. |
-| **GCP** | `gcs` | Native object locking | `gs://tf-state-{env}-gcp/` | GCS: 5 GB Always Free. State files are tiny. |
-| **OCI** | `oci` | Native `If-None-Match` locking | `oci://tf-state-{env}-oci/` | Object Storage: 10 GB Always Free. Backend requires OpenTofu ≥ 1.12. |
+| **AWS** | `s3` | `use_lockfile = true` (S3 native, no DynamoDB) | `s3://multicloud-tf-aws-state/{env}/` | S3 storage for state files: pennies/month. DynamoDB locking deprecated — use `use_lockfile`. |
+| **GCP** | `gcs` | Native object locking | `gs://multicloud-tf-gcp-state-<project-id>/{env}/terraform` | GCS: 5 GB Always Free. State files are tiny. |
+| **OCI** | `oci` | Native `If-None-Match` locking | `s3://multicloud-tf-oci-state/{env}/` via `us-sanjose-1` S3-compat | Object Storage: 10 GB Always Free. Backend requires OpenTofu ≥ 1.12. |
 # AWS — backend.tf
 # GCP — backend.tf
 # OCI — backend.tf

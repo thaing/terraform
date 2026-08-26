@@ -60,7 +60,7 @@ terraform/
 - **OpenTofu** >= 1.12.0 as the IaC engine (MPL 2.0, CNCF governance)
 - **Cloud-specific modules** with consistent variable/output interfaces (not abstraction wrappers)
 - **Directory-based environment separation** (no workspaces)
-- **Per-cloud, per-environment state** isolation
+- **Per-cloud state bucket** with per-environment key prefixes (`dev/`, `staging/`, `prod/`)
 - **Free tier first** — paid resources must be deletable/recreatable
 
 ## Provider Versions

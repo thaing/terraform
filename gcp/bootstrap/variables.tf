@@ -8,16 +8,6 @@ variable "project" {
   }
 }
 
-variable "environment" {
-  description = "Deployment environment name"
-  type        = string
-  default     = "dev"
-
-  validation {
-    condition     = contains(["dev", "staging", "prod"], var.environment)
-    error_message = "Environment must be one of: dev, staging, prod."
-  }
-}
 
 variable "gcp_project_id" {
   description = "GCP project ID appended to bucket names for global uniqueness (RESEARCH Pitfall 4)"

@@ -12,8 +12,8 @@ locals {
 module "state_bucket" {
   source = "./modules/state_bucket"
 
-  name           = "${var.project}-${var.environment}-oci-state"
+  name           = "${var.project}-oci-state"
   namespace      = var.namespace
   compartment_id = var.compartment_id
-  tags           = merge(local.common_tags, { environment = var.environment })
+  tags           = local.common_tags
 }

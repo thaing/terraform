@@ -1,9 +1,9 @@
 output "state_bucket_name" {
-  description = "State bucket name for the environment"
+  description = "Shared state bucket name"
   value       = module.state_bucket.bucket_name
 }
 
 output "state_bucket_id" {
-  description = "State bucket ID for the environment"
+  description = "Shared state bucket ID"
   value       = module.state_bucket.bucket_id
 }

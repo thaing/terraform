@@ -35,3 +35,6 @@ terraform.rc
 # graphify knowledge graph output
 .graphify_python
 graphify-out/
+
+# OpenCode local data
+.opencode/

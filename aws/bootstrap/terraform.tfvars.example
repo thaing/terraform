@@ -1,3 +1,2 @@
-project        = "multicloud-tf"
-region         = "us-east-1"
-environment    = "dev"
+project = "multicloud-tf"
+region  = "us-east-1"

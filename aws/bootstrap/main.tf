@@ -12,6 +12,6 @@ locals {
 module "state_bucket" {
   source = "./modules/state_bucket"
 
-  name = "${var.project}-${var.environment}-aws-state"
-  tags = merge(local.common_tags, { environment = var.environment })
+  name = "${var.project}-aws-state"
+  tags = local.common_tags
 }

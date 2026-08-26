@@ -22,17 +22,17 @@ module "networking" {
 }
 
 module "compute" {
-  source              = "../../modules/compute"
-  project             = var.project
-  environment         = var.environment
-  tags                = local.common_tags
-  size                = var.size
-  subnet_id           = module.networking.public_subnet_id
-  public_key_openssh  = var.public_key_openssh
-  availability_domain = var.availability_domain
-  compartment_id      = var.compartment_id
-  image_id            = var.image_id
-  second_volume_size_gb  = 50
+  source                = "../../modules/compute"
+  project               = var.project
+  environment           = var.environment
+  tags                  = local.common_tags
+  size                  = var.size
+  subnet_id             = module.networking.public_subnet_id
+  public_key_openssh    = var.public_key_openssh
+  availability_domain   = var.availability_domain
+  compartment_id        = var.compartment_id
+  image_id              = var.image_id
+  second_volume_size_gb = 50
 }
 
 module "storage" {
