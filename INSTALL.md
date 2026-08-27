@@ -52,20 +52,56 @@ exec -l $SHELL
 gcloud init
 
 # OCI CLI
-pip install oci-cli
+bash -c "$(curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh)"
+or
+brew install oci-cli
 ```
 
 ### Optional Dev Tools
 
-```bash
-# tflint — linter (uses .tflint.hcl)
-brew install tflint
+These tools are **optional** — you can deploy without them. They help keep configuration clean and secure as the project grows.
 
-# trivy — security scanner
+Verify each is installed with `--version` (e.g. `tflint --version`); if the command isn't found, run the install line for it.
+
+#### tflint — Terraform linter
+
+Catches invalid instance types, deprecated syntax, and unused declarations before you plan/apply. Uses the project's `.tflint.hcl`, which enables the terraform, aws, and google plugin rulesets.
+
+```bash
+# Install (macOS — Homebrew core dropped the formula; use the official tap)
+brew install terraform-linters/tap/tflint
+
+# First-time only: download the plugin rulesets declared in .tflint.hcl
+tflint --init
+
+# Run from a cloud root (e.g. aws/environments/dev) to lint that configuration
+tflint
+```
+
+> **Note:** TFLint has no OCI ruleset, so linting covers AWS/GCP only — OCI relies on `tofu validate` alone.
+
+#### trivy — security / misconfiguration scanner
+
+Scans IaC and files for misconfigurations, exposed secrets, and unsafe defaults.
+
+```bash
+# Install (macOS)
 brew install trivy
 
-# terraform-docs — module README generation
+# Scan the whole project from the repo root
+trivy config .
+```
+
+#### terraform-docs — module README generation
+
+Auto-generates the variable/output tables used in module READMEs, so docs stay in sync with the code.
+
+```bash
+# Install (macOS)
 brew install terraform-docs
+
+# Regenerate a module README (run from the repo root)
+terraform-docs markdown table --output-file README.md aws/modules/compute
 ```
 
 ### Project Structure

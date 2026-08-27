@@ -95,10 +95,11 @@ A learning-focused but production-grade Terraform project managing infrastructur
 # Google Cloud CLI
 # OCI CLI
 ### Dev Tools
-# tflint
-# trivy
-# terraform-docs
-# Or: brew install terraform-docs
+| Tool | Install (macOS) | Verify | Usage |
+|------|-----------------|--------|-------|
+| **tflint** | `brew install terraform-linters/tap/tflint` (Homebrew core dropped the formula) | `tflint --version` | `tflint --init` (once) then `tflint` from a cloud root. AWS/GCP only — no OCI ruleset. |
+| **trivy** | `brew install trivy` | `trivy --version` | `trivy config .` from repo root. Security/misconfig scan. |
+| **terraform-docs** | `brew install terraform-docs` | `terraform-docs --version` | `terraform-docs markdown table --output-file README.md <module-dir>` to regenerate module READMEs. |
 ### Pre-commit Hooks (optional but recommended)
 # .pre-commit-config.yaml
 ## Alternatives Considered
