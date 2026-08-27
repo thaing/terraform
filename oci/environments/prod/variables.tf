@@ -89,3 +89,9 @@ variable "image_id" {
   description = "OCI platform image OCID for the compute instance (Ubuntu 22.04 for your region)"
   type        = string
 }
+
+variable "shape" {
+  description = "OCI compute shape for the instance. Default: VM.Standard.A1.Flex (Always Free ARM flex)"
+  type        = string
+  default     = "VM.Standard.A1.Flex"
+}
