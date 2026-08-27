@@ -30,6 +30,7 @@ module "compute" {
   security_group_id  = module.networking.security_group_id
   public_key_openssh = var.public_key_openssh
   region             = var.region
+  image_id           = var.image_id
 }
 
 module "storage" {

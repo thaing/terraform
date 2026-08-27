@@ -28,6 +28,8 @@ terraform.rc
 
 # Plan files
 *.tfplan
+tfplan
+backend.tfbackend
 
 # Planning artifacts
 .planning/

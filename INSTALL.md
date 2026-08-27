@@ -236,14 +236,16 @@ cd aws/environments/dev
 
 # Create terraform.tfvars
 cat > terraform.tfvars << 'EOF'
-project           = "multicloud-tf"
-region            = "us-east-1"
-cidr_block        = "10.0.0.0/16"
-availability_zone = "us-east-1a"
-ssh_source_cidr   = "<YOUR_IP>/32"
-size              = "small"
-image_id          = "ami-0c55b159cbfafe1f0"   # Ubuntu 22.04 us-east-1
-bucket_name       = "multicloud-tf-dev-aws-storage"
+project            = "multicloud-tf"
+environment        = "dev"
+region             = "us-east-1"
+cidr_block         = "10.0.0.0/16"
+availability_zone  = "us-east-1a"
+ssh_source_cidr    = "<YOUR_IP>/32"
+size               = "small"
+storage_bucket_name = "multicloud-tf-dev-aws-storage"
+public_key_openssh = "ssh-rsa AAAA... user@host"
+# image_id = "ami-0c55b159cbfafe1f0"   # optional — omit for latest Ubuntu 22.04
 EOF
 # Replace <YOUR_IP> with your public IP (find it: curl ifconfig.me)
 
@@ -272,13 +274,15 @@ ssh -i ~/.ssh/id_rsa ubuntu@${PUBLIC_IP}
 ```bash
 cd ../../environments/staging
 # Same terraform.tfvars but with different values:
+#   environment = "staging"
 #   cidr_block = "10.16.0.0/16"
 #   availability_zone = "us-east-1b"
-#   bucket_name = "multicloud-tf-staging-aws-storage"
+#   storage_bucket_name = "multicloud-tf-staging-aws-storage"
 
 cd ../prod
+#   environment = "prod"
 #   cidr_block = "10.32.0.0/16"
-#   bucket_name = "multicloud-tf-prod-aws-storage"
+#   storage_bucket_name = "multicloud-tf-prod-aws-storage"
 ```
 
 ---
@@ -323,14 +327,16 @@ tofu apply
 cd gcp/environments/dev
 
 cat > terraform.tfvars << 'EOF'
-project        = "multicloud-tf"
-region         = "us-central1"
-gcp_project_id = "<your-gcp-project-id>"
-cidr_block     = "10.1.0.0/16"
-ssh_source_cidr = "<YOUR_IP>/32"
-size           = "small"
-image          = "debian-cloud/debian-12"
-bucket_name    = "multicloud-tf-dev-gcp-storage"
+project             = "multicloud-tf"
+environment         = "dev"
+region              = "us-central1"
+gcp_project_id      = "<your-gcp-project-id>"
+cidr_block          = "10.1.0.0/16"
+ssh_source_cidr     = "<YOUR_IP>/32"
+size                = "small"
+image               = "debian-cloud/debian-12"
+storage_bucket_name = "multicloud-tf-dev-gcp-storage"
+public_key_openssh  = "user@host:ssh-rsa AAAA... user@host"
 EOF
 
 tofu init -backend-config=backend.tfbackend
@@ -352,12 +358,14 @@ ssh -i ~/.ssh/id_rsa debian@${EXTERNAL_IP}
 
 ```bash
 cd ../../environments/staging
+# Set environment = "staging"
 # cidr_block = "10.17.0.0/16"
-# bucket_name = "multicloud-tf-staging-gcp-storage"
+# storage_bucket_name = "multicloud-tf-staging-gcp-storage"
 
 cd ../prod
+# Set environment = "prod"
 # cidr_block = "10.33.0.0/16"
-# bucket_name = "multicloud-tf-prod-gcp-storage"
+# storage_bucket_name = "multicloud-tf-prod-gcp-storage"
 ```
 
 ---
@@ -408,16 +416,17 @@ tofu apply
 cd oci/environments/dev
 
 cat > terraform.tfvars << 'EOF'
-project            = "multicloud-tf"
-region             = "us-sanjose-1"
-cidr_block         = "10.2.0.0/16"
-availability_domain = "US-SANJOSE-1-AD-1"
-ssh_source_cidr    = "<YOUR_IP>/32"
-compartment_id     = "ocid1.compartment.oc1..aaaa..."   # from identity output
-size               = "small"
-image              = "ocid1.image.oc1..aaaa..."          # Ubuntu 22.04 OCID
-bucket_name        = "multicloud-tf-dev-oci-storage"
-namespace          = "<your-object-storage-namespace>"    # from `oci os ns get`
+project              = "multicloud-tf"
+environment          = "dev"
+region               = "us-sanjose-1"
+cidr_block           = "10.2.0.0/16"
+availability_domain  = "US-SANJOSE-1-AD-1"
+ssh_source_cidr      = "<YOUR_IP>/32"
+compartment_id       = "ocid1.compartment.oc1..aaaa..."   # from identity output
+size                 = "small"
+image_id             = "ocid1.image.oc1..aaaa..."          # Ubuntu 22.04 OCID
+storage_bucket_name  = "multicloud-tf-dev-oci-storage"
+public_key_openssh   = "ssh-rsa AAAA... user@host"
 EOF
 # Replace placeholder values with your actual data
 
@@ -428,8 +437,8 @@ tofu apply
 
 **How to find your values:**
 - **Availability Domain:** `oci iam availability-domain list --query 'data[].name'`
-- **Image OCID:** Console → Compute → Custom Images → or use Oracle-provided images
-- **Namespace:** Console → Object Storage → Settings → namespace
+- **Image OCID:** `oci compute image list --compartment-id <tenancy-ocid> --operating-system "Canonical Ubuntu" --operating-system-version "22.04" --shape "VM.Standard.E2.1.Micro"` — or Console → Compute → Images
+- **Compartment OCID:** `tofu output` from the `oci/identity` apply (Section 6, Step 2)
 
 ### Step 4: SSH into Your Instance
 
@@ -443,12 +452,15 @@ ssh -i ~/.ssh/id_rsa opc@${PUBLIC_IP}
 
 ```bash
 cd ../../environments/staging
+# Set environment = "staging"
 # cidr_block = "10.18.0.0/16"
-# bucket_name = "multicloud-tf-staging-oci-storage"
+# compartment_id = <same as dev>
+# storage_bucket_name = "multicloud-tf-staging-oci-storage"
 
 cd ../prod
+# Set environment = "prod"
 # cidr_block = "10.34.0.0/16"
-# bucket_name = "multicloud-tf-prod-oci-storage"
+# storage_bucket_name = "multicloud-tf-prod-oci-storage"
 ```
 
 ---

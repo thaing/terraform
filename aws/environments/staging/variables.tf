@@ -79,3 +79,9 @@ variable "size" {
     error_message = "Size must be one of: small, medium, large."
   }
 }
+
+variable "image_id" {
+  description = "AMI ID override. When null, uses latest Ubuntu 22.04 from Canonical via data source (per D-28)"
+  type        = string
+  default     = null
+}

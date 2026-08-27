@@ -30,7 +30,7 @@ module "compute" {
   subnet_id          = module.networking.public_subnet_id
   public_key_openssh = var.public_key_openssh
   region             = var.region
-  image              = "debian-cloud/debian-12"
+  image              = var.image
 }
 
 module "storage" {

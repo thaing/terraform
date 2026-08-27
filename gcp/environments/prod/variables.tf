@@ -64,6 +64,12 @@ variable "public_key_openssh" {
   type        = string
 }
 
+variable "image" {
+  description = "GCP image family or full image URL. Default: debian-12"
+  type        = string
+  default     = "debian-cloud/debian-12"
+}
+
 variable "storage_bucket_name" {
   description = "GCS bucket name. Must be 3-63 lowercase alphanumeric, dots, hyphens. Pattern: multicloud-tf-{env}-gcp-storage"
   type        = string
