@@ -49,6 +49,12 @@ variable "image_id" {
   type        = string
 }
 
+variable "shape" {
+  description = "OCI compute shape for the instance. Default: VM.Standard.A1.Flex (Always Free ARM flex)"
+  type        = string
+  default     = "VM.Standard.A1.Flex"
+}
+
 variable "availability_domain" {
   description = "OCI availability domain for the instance"
   type        = string

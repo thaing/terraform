@@ -26,7 +26,7 @@ resource "oci_core_instance" "main" {
   availability_domain = var.availability_domain
   compartment_id      = var.compartment_id
   display_name        = "${var.project}-${var.environment}-instance"
-  shape               = "VM.Standard.A1.Flex"
+  shape               = var.shape
 
   shape_config {
     ocpus         = local.shape_config[var.size].ocpus
