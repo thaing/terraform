@@ -408,7 +408,15 @@ gcloud compute ssh multicloud-tf-dev-instance \
   --tunnel-through-iap
 ```
 
-Passwords/keys come from the instance's `ssh-keys` metadata (injected from `public_key_openssh`), so `gcloud compute ssh` authenticates with your matching private key automatically.
+The module injects your public key into the instance's `ssh-keys` metadata from `public_key_openssh` (format `username:ssh-rsa AAAA... user@host`). `gcloud compute ssh` uses that username and authenticates with the **matching private key** found in `~/.ssh/` or your SSH agent — so set a *real* `public_key_openssh` and keep the corresponding private key locally, e.g.:
+
+```bash
+ssh-keygen -t rsa -b 4096 -f ~/.ssh/gcp_key -C "you@example.com"
+# public_key_openssh = "you:$(cat ~/.ssh/gcp_key.pub)"
+gcloud compute ssh multicloud-tf-dev-instance \
+  --zone=us-central1-a --project=terraform-506823 \
+  --tunnel-through-iap --ssh-key-file=~/.ssh/gcp_key
+```
 
 ### Repeat for Staging and Prod
 
