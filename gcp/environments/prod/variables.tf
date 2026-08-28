@@ -85,3 +85,9 @@ variable "size" {
   type        = string
   default     = "e2-micro"
 }
+
+variable "public_ip" {
+  description = "Whether to assign an ephemeral public IP (D-31). Default true to match AWS/OCI. Set false if the org policy compute.vmExternalIpAccess denies external IPs."
+  type        = bool
+  default     = true
+}

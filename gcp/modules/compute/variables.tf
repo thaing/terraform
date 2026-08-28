@@ -49,3 +49,9 @@ variable "region" {
   description = "GCP region for zone derivation (zone = {region}-a)"
   type        = string
 }
+
+variable "public_ip" {
+  description = "Whether to assign an ephemeral public IP (D-31). Default true to match AWS/OCI behavior. Set false if the org policy compute.vmExternalIpAccess denies external IPs."
+  type        = bool
+  default     = true
+}

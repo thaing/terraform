@@ -31,6 +31,7 @@ module "compute" {
   public_key_openssh = var.public_key_openssh
   region             = var.region
   image              = var.image
+  public_ip          = var.public_ip
 }
 
 module "storage" {

@@ -20,8 +20,11 @@ resource "google_compute_instance" "main" {
   network_interface {
     subnetwork = var.subnet_id
 
-    access_config {
-      # Ephemeral public IP — D-31
+    dynamic "access_config" {
+      # Ephemeral public IP — D-31 (conditional; default true to match AWS/OCI)
+      for_each = var.public_ip ? [1] : []
+      content {
+      }
     }
   }
 
