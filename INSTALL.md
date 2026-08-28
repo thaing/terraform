@@ -383,13 +383,32 @@ tofu apply
 
 **Note:** GCP e2-micro is always free in US regions (us-central1, us-east1, us-west1).
 
-### Step 4: SSH into Your Instance
+**Note:** The instance is created without a public IP (`public_ip = false`), so SSH goes through the Identity-Aware Proxy (IAP) tunnel instead of directly over the internet.
 
+### Step 4: SSH into Your Instance (via IAP Tunnel)
+
+Because external IPs are denied by the org policy `constraints/compute.vmExternalIpAccess`, the instance has no public IP. Reach it through IAP, which tunnels SSH over Google's control plane using the instance's internal IP — no firewall rule for SSH is needed (only `tcp:22` must be allowed by the IAP firewall rule referenced below).
+
+**Prerequisites** (one-time):
+1. Your account needs **IAP-secured Tunnel User** (`roles/iap.tunnelResourceAccessor`) on the project, plus the default **roles/compute.osLogin** or a project SSH key.
+2. Add a firewall rule allowing IAP's source range `35.235.240.0/20` to reach `tcp:22` on your instances. This is *separate* from the existing `allow-ssh` rule (which is scoped to your IP and is now redundant for GCP since no public IP exists). Example:
+   ```bash
+   gcloud compute firewall-rules create allow-iap-ssh \
+     --network=multicloud-tf-dev-vpc \
+     --allow=tcp:22 \
+     --source-ranges=35.235.240.0/20
+   ```
+
+**SSH:**
 ```bash
-EXTERNAL_IP=$(tofu output -raw external_ip)
-echo "SSH into: debian@${EXTERNAL_IP}"
-ssh -i ~/.ssh/id_rsa debian@${EXTERNAL_IP}
+# Instance name = <project>-<environment>-instance, zone = <region>-a
+gcloud compute ssh multicloud-tf-dev-instance \
+  --zone=us-central1-a \
+  --project=terraform-506823 \
+  --tunnel-through-iap
 ```
+
+Passwords/keys come from the instance's `ssh-keys` metadata (injected from `public_key_openssh`), so `gcloud compute ssh` authenticates with your matching private key automatically.
 
 ### Repeat for Staging and Prod
 
