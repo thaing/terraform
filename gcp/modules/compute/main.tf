@@ -4,18 +4,11 @@ locals {
     environment = var.environment
     managed_by  = "opentofu"
   })
-
-  # D-27: Size mapping — only "small" creates resources
-  machine_type = {
-    small  = "e2-micro"
-    medium = null
-    large  = null
-  }
 }
 
 resource "google_compute_instance" "main" {
   name         = "${var.project}-${var.environment}-instance"
-  machine_type = local.machine_type[var.size]
+  machine_type = var.size
   zone         = "${var.region}-a"
 
   boot_disk {

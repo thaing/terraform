@@ -25,13 +25,8 @@ variable "tags" {
 }
 
 variable "size" {
-  description = "Instance size tier"
+  description = "Instance machine type (e.g. e2-micro for GCP free tier)"
   type        = string
-
-  validation {
-    condition     = contains(["small", "medium", "large"], var.size)
-    error_message = "Size must be one of: small, medium, large."
-  }
 }
 
 variable "subnet_id" {

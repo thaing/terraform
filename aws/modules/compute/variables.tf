@@ -25,13 +25,8 @@ variable "tags" {
 }
 
 variable "size" {
-  description = "Instance size tier"
+  description = "Instance type (e.g. t3.micro for AWS free tier)"
   type        = string
-
-  validation {
-    condition     = contains(["small", "medium", "large"], var.size)
-    error_message = "Size must be one of: small, medium, large."
-  }
 }
 
 variable "subnet_id" {

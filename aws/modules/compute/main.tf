@@ -5,13 +5,6 @@ locals {
     managed_by  = "opentofu"
   })
 
-  # D-27: Size mapping — only "small" creates resources (free-tier)
-  instance_type = {
-    small  = "t3.micro"
-    medium = null
-    large  = null
-  }
-
   # D-28: AMI resolution — user override or data source lookup
   ami_id = var.image_id != null ? var.image_id : data.aws_ami.ubuntu.id
 }
@@ -41,7 +34,7 @@ resource "aws_key_pair" "deployer" {
 
 resource "aws_instance" "main" {
   ami                    = local.ami_id
-  instance_type          = local.instance_type[var.size]
+  instance_type          = var.size
   subnet_id              = var.subnet_id
   vpc_security_group_ids = [var.security_group_id]
   key_name               = aws_key_pair.deployer.key_name

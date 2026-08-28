@@ -70,14 +70,9 @@ variable "storage_bucket_name" {
 }
 
 variable "size" {
-  description = "Instance size tier (per D-27: only small creates resources)"
+  description = "Instance type (e.g. t3.micro for AWS free tier)"
   type        = string
-  default     = "small"
-
-  validation {
-    condition     = contains(["small", "medium", "large"], var.size)
-    error_message = "Size must be one of: small, medium, large."
-  }
+  default     = "t3.micro"
 }
 
 variable "image_id" {

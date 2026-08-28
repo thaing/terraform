@@ -197,6 +197,7 @@ aws sso login
 ```bash
 gcloud auth application-default login
 gcloud config set project <PROJECT_ID>
+gcloud auth application-default set-quota-project QUOTA_PROJECT_ID
 gcloud config get-value project   # capture this value — used as the bucket-name suffix
 ```
 
@@ -278,7 +279,7 @@ region             = "us-east-1"
 cidr_block         = "10.0.0.0/16"
 availability_zone  = "us-east-1a"
 ssh_source_cidr    = "<YOUR_IP>/32"
-size               = "small"
+size               = "t3.micro"
 storage_bucket_name = "multicloud-tf-dev-aws-storage"
 public_key_openssh = "ssh-rsa AAAA... user@host"
 # image_id = "ami-0c55b159cbfafe1f0"   # optional — omit for latest Ubuntu 22.04
@@ -369,7 +370,7 @@ region              = "us-central1"
 gcp_project_id      = "<your-gcp-project-id>"
 cidr_block          = "10.1.0.0/16"
 ssh_source_cidr     = "<YOUR_IP>/32"
-size                = "small"
+size                = "e2-micro"
 image               = "debian-cloud/debian-12"
 storage_bucket_name = "multicloud-tf-dev-gcp-storage"
 public_key_openssh  = "user@host:ssh-rsa AAAA... user@host"

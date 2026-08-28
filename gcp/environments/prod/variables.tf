@@ -81,12 +81,7 @@ variable "storage_bucket_name" {
 }
 
 variable "size" {
-  description = "Instance size tier (per D-27: only small creates resources)"
+  description = "Instance machine type (e.g. e2-micro for GCP free tier)"
   type        = string
-  default     = "small"
-
-  validation {
-    condition     = contains(["small", "medium", "large"], var.size)
-    error_message = "Size must be one of: small, medium, large."
-  }
+  default     = "e2-micro"
 }
