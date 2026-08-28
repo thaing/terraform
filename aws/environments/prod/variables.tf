@@ -80,3 +80,14 @@ variable "image_id" {
   type        = string
   default     = null
 }
+
+variable "cost_alert_amount" {
+  description = "Dollar amount (USD) of the monthly cost budget. Alerts when forecasted spend is projected to exceed this."
+  type        = number
+  default     = 10
+}
+
+variable "alert_email" {
+  description = "Email address that receives cost-budget alerts"
+  type        = string
+}

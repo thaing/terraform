@@ -283,6 +283,8 @@ size               = "t3.micro"
 storage_bucket_name = "multicloud-tf-dev-aws-storage"
 public_key_openssh = "ssh-rsa AAAA... user@host"
 # image_id = "ami-0c55b159cbfafe1f0"   # optional — omit for latest Ubuntu 22.04
+cost_alert_amount  = 10               # forecasted monthly cost alert threshold ($)
+alert_email        = "you@example.com" # receives cost-budget alerts
 EOF
 # Replace <YOUR_IP> with your public IP (find it: curl ifconfig.me)
 
@@ -374,6 +376,9 @@ size                = "e2-micro"
 image               = "debian-cloud/debian-12"
 storage_bucket_name = "multicloud-tf-dev-gcp-storage"
 public_key_openssh  = "user@host:ssh-rsa AAAA... user@host"
+billing_account_id  = "XXXXXX-XXXXXX-XXXXXX"  # GCP Cloud Billing account ID
+cost_alert_amount   = 10                # forecasted monthly cost alert threshold ($)
+alert_email         = "you@example.com" # receives cost-budget alerts
 EOF
 
 tofu init -backend-config=backend.tfbackend
@@ -491,6 +496,8 @@ size                 = "small"
 image_id             = "ocid1.image.oc1..aaaa..."          # Ubuntu 22.04 OCID
 storage_bucket_name  = "multicloud-tf-dev-oci-storage"
 public_key_openssh   = "ssh-rsa AAAA... user@host"
+cost_alert_amount    = 10               # forecast monthly cost alert threshold ($)
+alert_email          = "you@example.com" # receives cost-budget alerts
 EOF
 # Replace placeholder values with your actual data
 
@@ -526,6 +533,30 @@ cd ../prod
 # cidr_block = "10.34.0.0/16"
 # storage_bucket_name = "multicloud-tf-prod-oci-storage"
 ```
+
+---
+
+## 6.5 Cost Alerts (Budgets)
+
+Each cloud creates a **monthly cost budget** that emails you when **forecasted** spend is projected to exceed a dollar threshold. Set the threshold and recipient in `terraform.tfvars`:
+
+| Variable | Type | Notes |
+|----------|------|-------|
+| `cost_alert_amount` | number ($) | Monthly budget amount; alert fires on forecasted spend reaching this. Default `10`. |
+| `alert_email` | string | Plain-email recipient for budget alerts. |
+| `billing_account_id` (GCP only) | string | GCP Cloud Billing account ID (`XXXXXX-XXXXXX-XXXXXX`) the budget attaches to. |
+
+The budget module lives in `{cloud}/modules/budget/` and the alert logic is:
+
+- **AWS** (`aws_budgets_budget`): `budget_type = "COST"`, `notification_type = "FORECASTED"`, `threshold_type = "ABSOLUTE_VALUE"` at `cost_alert_amount`.
+- **GCP** (`google_billing_budget` + email `google_monitoring_notification_channel`): `threshold_percent = 1.0` with `spend_basis = "FORECASTED_SPEND"`, scoped to the current project.
+- **OCI** (`oci_budget_budget` + `oci_budget_alert_rule`): `oci_budget_alert_rule` with `type = "FORECAST"`, `threshold_type = "ABSOLUTE"` at `cost_alert_amount`, `recipients = [alert_email]`.
+
+### Per-cloud prerequisites
+
+- **AWS**: creating Budgets requires IAM permissions `budgets:CreateBudget` / `budgets:ViewBudget`. AWS **root users cannot create budgets** — use an IAM user or role, and add these actions to the project role if not already present.
+- **GCP**: enable the **Cloud Billing Budget API** for the project. Budgets attach to the **billing account** (`billing_account_id`), not the project. The identity needs `roles/billing.costsManager` (or billing account admin) on that billing account.
+- **OCI**: Budgets are included in the free tier. The identity needs the budget service permission in the tenancy (see `oci/modules/iam` — may require adding a `USAGE_BUDGETS`/budget policy statement for the project group).
 
 ---
 

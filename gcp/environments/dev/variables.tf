@@ -91,3 +91,19 @@ variable "public_ip" {
   type        = bool
   default     = true
 }
+
+variable "billing_account_id" {
+  description = "Cloud Billing account ID (XXXXXX-XXXXXX-XXXXXX) the cost budget attaches to. Budgets are per billing account, not per project."
+  type        = string
+}
+
+variable "cost_alert_amount" {
+  description = "Dollar amount (USD) of the monthly cost budget. Alerts when forecasted spend is projected to exceed this."
+  type        = number
+  default     = 10
+}
+
+variable "alert_email" {
+  description = "Email address that receives cost-budget alerts"
+  type        = string
+}

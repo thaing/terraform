@@ -42,3 +42,12 @@ module "storage" {
   bucket_name = var.storage_bucket_name
   region      = var.region
 }
+
+module "budget" {
+  source             = "../../modules/budget"
+  project            = var.project
+  environment        = var.environment
+  billing_account_id = var.billing_account_id
+  cost_alert_amount  = var.cost_alert_amount
+  alert_email        = var.alert_email
+}

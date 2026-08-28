@@ -40,3 +40,12 @@ module "storage" {
   tags        = local.common_tags
   bucket_name = var.storage_bucket_name
 }
+
+module "budget" {
+  source            = "../../modules/budget"
+  project           = var.project
+  environment       = var.environment
+  tags              = local.common_tags
+  cost_alert_amount = var.cost_alert_amount
+  alert_email       = var.alert_email
+}
