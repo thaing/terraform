@@ -1,6 +1,8 @@
 provider "google" {
-  project = var.gcp_project_id
-  region  = var.region
+  project               = var.gcp_project_id
+  region                = var.region
+  user_project_override = true
+  billing_project       = var.gcp_project_id
 }
 
 locals {
