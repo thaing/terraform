@@ -6,11 +6,12 @@ locals {
   }
 }
 
-# Monthly cost budget scoped to the project compartment. Its alert rule fires
-# on FORECAST spend exceeding the dollar amount (var.cost_alert_amount) and
+# Monthly cost budget that lives at the tenancy (root compartment) level and
+# tracks the spend of the project compartment. Its alert rule fires on
+# FORECAST spend exceeding the dollar amount (var.cost_alert_amount) and
 # notifies var.alert_email.
 resource "oci_budget_budget" "cost" {
-  compartment_id = var.compartment_id
+  compartment_id = var.tenancy_id
   display_name   = "${var.project}-${var.environment}-budget"
   amount         = var.cost_alert_amount
   reset_period   = "MONTHLY"

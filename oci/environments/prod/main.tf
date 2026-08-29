@@ -50,6 +50,7 @@ module "budget" {
   project           = var.project
   environment       = var.environment
   compartment_id    = var.compartment_id
+  tenancy_id        = var.tenancy_id
   cost_alert_amount = var.cost_alert_amount
   alert_email       = var.alert_email
 }

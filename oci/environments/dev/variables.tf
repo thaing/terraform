@@ -59,6 +59,11 @@ variable "compartment_id" {
   type        = string
 }
 
+variable "tenancy_id" {
+  description = "OCI tenancy OCID (root compartment) — where the cost budget resides"
+  type        = string
+}
+
 variable "public_key_openssh" {
   description = "Public SSH key in OpenSSH format (ssh-rsa AAAA... user@host). REQUIRED — never leave empty."
   type        = string

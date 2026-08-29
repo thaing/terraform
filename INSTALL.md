@@ -492,6 +492,7 @@ cidr_block           = "10.2.0.0/16"
 availability_domain  = "gdrD:US-SANJOSE-1-AD-1"
 ssh_source_cidr      = "<YOUR_IP>/32"
 compartment_id       = "ocid1.compartment.oc1..aaaa..."   # from identity output
+tenancy_id           = "ocid1.tenancy.oc1..aaaa..."       # root compartment (budget residence)
 size                 = "small"
 image_id             = "ocid1.image.oc1..aaaa..."          # Ubuntu 22.04 OCID
 storage_bucket_name  = "multicloud-tf-dev-oci-storage"
@@ -545,12 +546,13 @@ Each cloud creates a **monthly cost budget** that emails you when **forecasted**
 | `cost_alert_amount` | number ($) | Monthly budget amount; alert fires on forecasted spend reaching this. Default `10`. |
 | `alert_email` | string | Plain-email recipient for budget alerts. |
 | `billing_account_id` (GCP only) | string | GCP Cloud Billing account ID (`XXXXXX-XXXXXX-XXXXXX`) the budget attaches to. |
+| `tenancy_id` (OCI only) | string | OCI tenancy (root compartment) OCID where the budget resource resides. |
 
 The budget module lives in `{cloud}/modules/budget/` and the alert logic is:
 
 - **AWS** (`aws_budgets_budget`): `budget_type = "COST"`, `notification_type = "FORECASTED"`, `threshold_type = "ABSOLUTE_VALUE"` at `cost_alert_amount`.
 - **GCP** (`google_billing_budget` + email `google_monitoring_notification_channel`): `threshold_percent = 1.0` with `spend_basis = "FORECASTED_SPEND"`, scoped to the current project.
-- **OCI** (`oci_budget_budget` + `oci_budget_alert_rule`): `oci_budget_alert_rule` with `type = "FORECAST"`, `threshold_type = "ABSOLUTE"` at `cost_alert_amount`, `recipients = [alert_email]`.
+- **OCI** (`oci_budget_budget` + `oci_budget_alert_rule`): the budget is created in the **tenancy (root compartment)** via `compartment_id = var.tenancy_id`, tracks spend of the project compartment via `targets = [compartment_id]` (`target_type = "COMPARTMENT"`), and its alert rule uses `type = "FORECAST"`, `threshold_type = "ABSOLUTE"` at `cost_alert_amount`, `recipients = [alert_email]`.
 
 ### Per-cloud prerequisites
 

@@ -19,7 +19,12 @@ variable "environment" {
 }
 
 variable "compartment_id" {
-  description = "OCID of the compartment the budget is scoped to (the project compartment)"
+  description = "OCID of the compartment whose spend the budget tracks (the project compartment)"
+  type        = string
+}
+
+variable "tenancy_id" {
+  description = "OCI tenancy OCID (root compartment) where the budget resource resides"
   type        = string
 }
 
