@@ -111,3 +111,9 @@ variable "alert_email" {
   description = "Email address that receives cost-budget alerts"
   type        = string
 }
+
+variable "size_k8s" {
+  description = "Kubernetes node pool size tier. Mapped in the module to node shape config (small/medium=1 OCPU/6GB, large=2 OCPU/12GB ARM) within the OCI Always Free 2/12 cap per D-41/D-42."
+  type        = string
+  default     = "small"
+}

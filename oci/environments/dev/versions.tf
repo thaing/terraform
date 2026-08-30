@@ -6,5 +6,13 @@ terraform {
       source  = "oracle/oci"
       version = "~> 8.26"
     }
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 3.2"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 3.2"
+    }
   }
 }

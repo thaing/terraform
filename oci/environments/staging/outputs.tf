@@ -47,3 +47,13 @@ output "storage_namespace" {
   description = "Object Storage namespace"
   value       = module.storage.namespace
 }
+
+output "cluster_id" {
+  description = "OCID of the OKE cluster"
+  value       = module.kubernetes.cluster_id
+}
+
+output "cluster_endpoint" {
+  description = "OKE cluster control-plane endpoint"
+  value       = module.kubernetes.cluster_endpoint
+}
