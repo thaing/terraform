@@ -47,3 +47,24 @@ output "storage_bucket_url" {
   description = "URL of the GCS storage bucket"
   value       = module.storage.bucket_url
 }
+
+output "cluster_id" {
+  description = "GKE cluster ID"
+  value       = module.kubernetes.cluster_id
+}
+
+output "cluster_endpoint" {
+  description = "GKE cluster endpoint"
+  value       = module.kubernetes.cluster_endpoint
+}
+
+output "cluster_ca_certificate" {
+  description = "GKE cluster CA certificate"
+  value       = module.kubernetes.cluster_ca_certificate
+  sensitive   = true
+}
+
+output "node_pool_names" {
+  description = "GKE node pool names"
+  value       = module.kubernetes.node_pool_names
+}

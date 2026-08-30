@@ -107,3 +107,14 @@ variable "alert_email" {
   description = "Email address that receives cost-budget alerts"
   type        = string
 }
+
+variable "size_k8s" {
+  description = "Kubernetes node pool size tier. Mapped in the kubernetes module (small=e2-micro, medium=e2-standard-2, large=e2-standard-4). Per D-41/D-42. GKE e2-micro is free in US regions per STACK.md; may need e2-small/e2-medium for workloads (RESEARCH A3)."
+  type        = string
+  default     = "small"
+}
+
+variable "zone" {
+  description = "GCP zone for the GKE node pool (single zone, cost-controlled). e.g. us-central1-a"
+  type        = string
+}
