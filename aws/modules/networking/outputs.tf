@@ -17,3 +17,13 @@ output "security_group_id" {
   description = "ID of the public security group"
   value       = aws_security_group.public.id
 }
+
+output "public_subnet_id_b" {
+  description = "ID of the second public subnet (AZ b — EKS requires subnets in ≥ 2 AZs, B1)"
+  value       = aws_subnet.public_b.id
+}
+
+output "public_subnet_ids" {
+  description = "IDs of both public subnets (feed to EKS vpc_config / node group)"
+  value       = [aws_subnet.public.id, aws_subnet.public_b.id]
+}

@@ -5,8 +5,9 @@ locals {
     managed_by  = "opentofu"
   })
 
-  public_subnet_cidr  = cidrsubnet(var.cidr_block, 8, 0)
-  private_subnet_cidr = cidrsubnet(var.cidr_block, 8, 1)
+  public_subnet_cidr   = cidrsubnet(var.cidr_block, 8, 0)
+  private_subnet_cidr  = cidrsubnet(var.cidr_block, 8, 1)
+  public_subnet_b_cidr = cidrsubnet(var.cidr_block, 8, 2)
 }
 
 resource "aws_vpc" "main" {
@@ -22,6 +23,15 @@ resource "aws_subnet" "public" {
   availability_zone       = var.availability_zone
   map_public_ip_on_launch = true
   tags                    = merge(local.common_tags, { Name = "${var.project}-${var.environment}-public" })
+}
+
+# B1: EKS requires subnets in at least 2 AZs — second public subnet in var.availability_zone_b
+resource "aws_subnet" "public_b" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = local.public_subnet_b_cidr
+  availability_zone       = var.availability_zone_b
+  map_public_ip_on_launch = true
+  tags                    = merge(local.common_tags, { Name = "${var.project}-${var.environment}-public-b" })
 }
 
 resource "aws_subnet" "private" {
@@ -49,6 +59,11 @@ resource "aws_route_table" "public" {
 
 resource "aws_route_table_association" "public" {
   subnet_id      = aws_subnet.public.id
+  route_table_id = aws_route_table.public.id
+}
+
+resource "aws_route_table_association" "public_b" {
+  subnet_id      = aws_subnet.public_b.id
   route_table_id = aws_route_table.public.id
 }
 

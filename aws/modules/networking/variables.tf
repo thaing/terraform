@@ -48,3 +48,8 @@ variable "availability_zone" {
   description = "AWS availability zone for subnets (single AZ per D-20)"
   type        = string
 }
+
+variable "availability_zone_b" {
+  description = "AWS availability zone for the second public subnet (EKS requires subnets in at least 2 AZs — B1). Must differ from availability_zone."
+  type        = string
+}
