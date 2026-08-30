@@ -55,19 +55,19 @@ module "budget" {
 }
 
 module "kubernetes" {
-  source                    = "../../modules/kubernetes"
-  project                   = var.project
-  environment               = var.environment
-  tags                      = local.common_tags
-  size                      = var.size_k8s
-  network                   = module.networking.network_id
-  subnetwork                = module.networking.public_subnet_id
-  secondary_pod_range_name  = module.networking.secondary_pod_range_name
+  source                       = "../../modules/kubernetes"
+  project                      = var.project
+  environment                  = var.environment
+  tags                         = local.common_tags
+  size                         = var.size_k8s
+  network                      = module.networking.network_id
+  subnetwork                   = module.networking.public_subnet_id
+  secondary_pod_range_name     = module.networking.secondary_pod_range_name
   secondary_service_range_name = module.networking.secondary_service_range_name
-  gcp_project_id            = var.gcp_project_id
-  region                    = var.region
-  zone                      = var.zone
-  public_key_openssh        = var.public_key_openssh
+  gcp_project_id               = var.gcp_project_id
+  region                       = var.region
+  zone                         = var.zone
+  public_key_openssh           = var.public_key_openssh
 }
 
 # GKE auth token drives the helm/kubernetes providers + kubeconfig (T-05-11: sensitive)
