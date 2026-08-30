@@ -27,5 +27,10 @@ resource "oci_identity_policy" "project" {
     "Allow group ${oci_identity_group.project.name} to manage instance-family in compartment ${oci_identity_compartment.project.name}",
     "Allow group ${oci_identity_group.project.name} to manage volume-family in compartment ${oci_identity_compartment.project.name}",
     "Allow group ${oci_identity_group.project.name} to manage object-family in compartment ${oci_identity_compartment.project.name}",
+    # W2 fix (05-03): OKE requires managing the cluster-family (create/scale OKE clusters)
+    "Allow group ${oci_identity_group.project.name} to manage cluster-family in compartment ${oci_identity_compartment.project.name}",
+    # W2 fix (05-03): OKE service must manage resources (worker nodes, LB backends,
+    # networking) on behalf of the tenancy — required before the first cluster apply
+    "Allow service oke to manage all-resources in compartment ${oci_identity_compartment.project.name}",
   ]
 }
