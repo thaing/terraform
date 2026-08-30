@@ -91,3 +91,20 @@ variable "alert_email" {
   description = "Email address that receives cost-budget alerts"
   type        = string
 }
+
+variable "size_k8s" {
+  description = "Kubernetes node pool size tier. Mapped via kubernetes module locals (small=t3.micro spot, medium=t4g.medium, large=m6i.large). Per D-41/D-42."
+  type        = string
+  default     = "small"
+}
+
+variable "availability_zone_b" {
+  description = "AWS availability zone for the second public subnet (EKS requires subnets in ≥ 2 AZs — B1). Must differ from availability_zone."
+  type        = string
+}
+
+variable "k8s_version" {
+  description = "EKS Kubernetes version. Pinned to 1.36 (latest standard-support) to avoid the extended-support cost cliff per D-35"
+  type        = string
+  default     = "1.36"
+}

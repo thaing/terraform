@@ -49,3 +49,25 @@ output "storage_bucket_arn" {
   description = "ARN of the S3 storage bucket"
   value       = module.storage.bucket_arn
 }
+
+# EKS cluster outputs
+output "cluster_id" {
+  description = "EKS cluster ID"
+  value       = module.kubernetes.cluster_id
+}
+
+output "cluster_endpoint" {
+  description = "EKS cluster endpoint"
+  value       = module.kubernetes.cluster_endpoint
+}
+
+output "cluster_ca_certificate" {
+  description = "EKS cluster CA certificate"
+  value       = module.kubernetes.cluster_ca_certificate
+  sensitive   = true
+}
+
+output "node_pool_names" {
+  description = "EKS node pool names"
+  value       = module.kubernetes.node_pool_names
+}
