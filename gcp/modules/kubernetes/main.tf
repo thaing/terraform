@@ -19,9 +19,12 @@ locals {
 data "google_client_config" "current" {}
 
 # --- GKE Standard cluster (D-34/D-36: managed GKE, free via $74.40/mo credit for one zonal cluster) ---
+# Zonal (single-zone via var.zone) = only a zonal cluster is covered by the $74.40/mo credit
+# (D-36). A REGIONAL cluster (3-zone control plane) would cost ~$223/mo and contradicts
+# the free-tier cost-control constraint — hence location = var.zone, NOT var.region.
 resource "google_container_cluster" "this" {
   name     = "${var.project}-${var.environment}-gke"
-  location = var.region
+  location = var.zone
   project  = var.gcp_project_id
 
   # Cost control: avoid ephemeral default-pool churn (RESEARCH Implementation Notes)
@@ -61,10 +64,13 @@ resource "google_container_cluster" "this" {
 }
 
 # --- Standalone node pool (D-41: explicit sizing, machine_type mapped from size) ---
+# Zonal pool (location = var.zone) — a single node in one zone. This keeps the whole
+# cluster in the free-tier zonal configuration (aligns with D-36) and avoids the
+# regional-pool apply-time validation error (node_count must divide evenly across zones).
 resource "google_container_node_pool" "this" {
   name     = "${var.project}-${var.environment}-pool"
   cluster  = google_container_cluster.this.id
-  location = var.region
+  location = var.zone
   project  = var.gcp_project_id
 
   node_count = 1
