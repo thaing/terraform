@@ -7,6 +7,14 @@ locals {
 
   public_subnet_cidr  = cidrsubnet(var.cidr_block, 8, 0) # 10.1.0.0/24
   private_subnet_cidr = cidrsubnet(var.cidr_block, 8, 1) # 10.1.1.0/24
+
+  # B2: VPC-native secondary ranges for GKE Dataplane V2 (pods + services).
+  # Index 0 is skipped because it contains the primary public 10.1.0.0/24 +
+  # private 10.1.1.0/24 ranges. Indexes 1 and 2 are guaranteed non-overlapping and
+  # aligned to the /18 boundary (GCP rejects unaligned secondary ranges — do NOT
+  # hardcode "10.1.2.0/18", which is not /18-aligned).
+  pod_secondary_cidr     = cidrsubnet(var.cidr_block, 2, 1) # 10.1.64.0/18 under the 10.1.0.0/16 scheme
+  service_secondary_cidr = cidrsubnet(var.cidr_block, 2, 2) # 10.1.128.0/18
 }
 
 # Custom-mode VPC: auto_create_subnetworks = false disables the auto-mode subnets
@@ -23,6 +31,18 @@ resource "google_compute_subnetwork" "public" {
   ip_cidr_range = local.public_subnet_cidr
   region        = var.region
   network       = google_compute_network.main.id
+
+  # B2: VPC-native secondary ranges — GKE Dataplane V2 (ADVANCED_DATAPATH) is
+  # VPC-native and rejects clusters without these secondary ranges at apply.
+  secondary_ip_range {
+    range_name    = "pods"
+    ip_cidr_range = local.pod_secondary_cidr
+  }
+
+  secondary_ip_range {
+    range_name    = "services"
+    ip_cidr_range = local.service_secondary_cidr
+  }
 }
 
 # GCP subnetworks have no public/private attribute. The "private" subnetwork is a

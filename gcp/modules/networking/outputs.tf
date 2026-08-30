@@ -22,3 +22,23 @@ output "firewall_rule_names" {
     google_compute_firewall.icmp.name,
   ]
 }
+
+output "secondary_pod_cidr" {
+  description = "Secondary CIDR for GKE pod IPs (VPC-native / Dataplane V2, B2)"
+  value       = local.pod_secondary_cidr
+}
+
+output "secondary_pod_range_name" {
+  description = "Name of the pod secondary_ip_range on the public subnetwork"
+  value       = "pods"
+}
+
+output "secondary_service_cidr" {
+  description = "Secondary CIDR for GKE service IPs (VPC-native / Dataplane V2, B2)"
+  value       = local.service_secondary_cidr
+}
+
+output "secondary_service_range_name" {
+  description = "Name of the service secondary_ip_range on the public subnetwork"
+  value       = "services"
+}
