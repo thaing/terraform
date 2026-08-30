@@ -17,7 +17,8 @@
 9. [Cleanup / Destroy](#9-cleanup--destroy)
 10. [Troubleshooting](#10-troubleshooting)
 11. [Known Gaps & Notes](#11-known-gaps--notes)
-12. [Kubernetes (Coming Soon)](#12-kubernetes-coming-soon)
+12. [Phase 5 — Kubernetes tooling](#12-phase-5--kubernetes-tooling)
+13. [Kubernetes (Coming Soon)](#13-kubernetes-coming-soon)
 
 ---
 
@@ -727,7 +728,59 @@ TF_LOG=DEBUG tofu plan    # Verbose logging
 
 ---
 
-## 12. Kubernetes (Coming Soon)
+## 12. Phase 5 — Kubernetes tooling
+
+Phase 5 (Kubernetes clusters) adds a small CLI toolchain for **manual** cluster validation and debugging. The `helm_release` / `kubernetes` providers do their work inside OpenTofu — these CLIs are for the human checks (`helm list`, `cilium status`, kubeconfig generation) that follow an apply.
+
+Current verified state (2026-08-30):
+
+| Tool | Version | Present? | Purpose |
+|------|---------|----------|---------|
+| OpenTofu | v1.12.x | ✓ | IaC engine |
+| kubectl | v1.36.4 | ✓ | Cluster validation (`kubectl get nodes`) |
+| gcloud | 582.0.0 | ✓ | GKE auth (`gcloud container clusters get-credentials`) |
+| helm | v4.2.4 | ✓ (brew) | `helm list` debugging of workload releases |
+| cilium CLI | v0.19.7 | ✓ (official release) | `cilium status` on EKS/OKE self-managed installs |
+| aws CLI | v2.36.31 | ✓ | EKS kubeconfig + `aws eks` auth validation |
+| oci CLI | v3.91.0 | ✓ | OKE kubeconfig + troubleshooting |
+
+### Install and verify commands
+
+```bash
+# helm — NOT required by the helm_release provider, but needed for manual debugging
+brew install helm
+helm version          # e.g. v4.2.4
+
+# cilium CLI — for cilium status on EKS/OKE (Cilium itself installs via Helm in-cluster)
+brew install cilium-cli       # no bottle on older macOS/x86 — use the official release install instead
+cilium version                # e.g. v0.19.7
+
+# Official cilium-cli install (any platform, checksum-verified):
+#   CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
+#   curl -L --remote-name-all \
+#     https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-darwin-amd64.tar.gz{,.sha256sum}
+#   shasum -a 256 -c cilium-darwin-amd64.tar.gz.sha256sum \
+#     && tar xzf cilium-darwin-amd64.tar.gz \
+#     && cp cilium ~/.local/bin/
+
+# aws CLI — kubeconfig generation + aws eks auth validation
+brew install awscli            # or the official AWS v2 installer
+aws configure                  # or: aws sso login
+aws --version                  # e.g. aws-cli/2.36.31
+
+# oci CLI — OKE kubeconfig + troubleshooting
+brew install oci-cli           # or the official install script
+#   bash -c "$(curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh)"
+oci --version                  # e.g. 3.91.0
+```
+
+kubectl v1.36.4 and gcloud are already installed (see Section 1) — no action needed.
+
+**Google provider note:** The GCP environment roots now pin `hashicorp/google ~> 8.0` (bumped from `~> 7.43` in Phase 5 — google 8.0.0 was published 2026-08-26, and the major bump keeps current GKE/K8s resource support that the 7.x line would resolve to older schemas). Verified: `gcp/environments/{dev,staging,prod}` all pass `tofu init -backend=false && tofu validate` under google 8.0.0.
+
+---
+
+## 13. Kubernetes (Coming Soon)
 
 This phase will cover deploying Kubernetes clusters on each cloud:
 
