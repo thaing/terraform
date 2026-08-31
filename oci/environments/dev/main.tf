@@ -8,9 +8,6 @@ locals {
     environment = var.environment
     managed_by  = "opentofu"
   })
-
-  # OKE kubeconfig carries the CA + token the helm/kubernetes providers need
-  oke_auth = yamldecode(module.kubernetes.kubeconfig)
 }
 
 module "networking" {
@@ -66,7 +63,7 @@ module "kubernetes" {
   tags                = local.common_tags
   size                = var.size_k8s
   vcn_id              = module.networking.network_id
-  subnet_ids          = [module.networking.public_subnet_id]
+  subnet_ids          = [module.networking.public_subnet_id, module.networking.private_subnet_id]
   compartment_id      = var.compartment_id
   availability_domain = var.availability_domain
   public_key_openssh  = var.public_key_openssh
@@ -75,14 +72,22 @@ module "kubernetes" {
 provider "kubernetes" {
   host                   = module.kubernetes.cluster_endpoint
   cluster_ca_certificate = base64decode(module.kubernetes.cluster_ca_certificate)
-  token                  = local.oke_auth.users[0].user.token
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    command     = "oci"
+    args        = ["ce", "cluster", "generate-token", "--cluster-id", module.kubernetes.cluster_id, "--region", var.region]
+  }
 }
 
 provider "helm" {
   kubernetes = {
     host                   = module.kubernetes.cluster_endpoint
     cluster_ca_certificate = base64decode(module.kubernetes.cluster_ca_certificate)
-    token                  = local.oke_auth.users[0].user.token
+    exec = {
+      api_version = "client.authentication.k8s.io/v1beta1"
+      command     = "oci"
+      args        = ["ce", "cluster", "generate-token", "--cluster-id", module.kubernetes.cluster_id, "--region", var.region]
+    }
   }
 }
 

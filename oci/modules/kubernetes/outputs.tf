@@ -5,7 +5,7 @@ output "cluster_id" {
 
 output "cluster_endpoint" {
   description = "OKE cluster control-plane endpoint (https URL)"
-  value       = try(oci_containerengine_cluster.this.endpoints[0].kubernetes, "")
+  value       = "https://${oci_containerengine_cluster.this.endpoints[0].public_endpoint}"
 }
 
 output "cluster_ca_certificate" {

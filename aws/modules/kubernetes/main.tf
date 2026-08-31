@@ -1,3 +1,8 @@
+# Hand-authored module (deliberate) — providers come from the registry, this module layer is
+# hand-written per the project's core learning outcome (see research/ARCHITECTURE.md
+# "Pattern: Hand-Authored Modules over Registry Modules").
+# Production registry alternative: terraform-aws-modules/eks (https://registry.terraform.io/modules/terraform-aws-modules/eks)
+#   — battle-tested IRSA/CNI/upgrade-safety; prefer it for a production, non-learning project.
 locals {
   common_tags = merge(var.tags, {
     project     = var.project

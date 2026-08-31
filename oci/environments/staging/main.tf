@@ -66,7 +66,7 @@ module "kubernetes" {
   tags                = local.common_tags
   size                = var.size_k8s
   vcn_id              = module.networking.network_id
-  subnet_ids          = [module.networking.public_subnet_id]
+  subnet_ids          = [module.networking.public_subnet_id, module.networking.private_subnet_id]
   compartment_id      = var.compartment_id
   availability_domain = var.availability_domain
   public_key_openssh  = var.public_key_openssh

@@ -41,7 +41,7 @@ variable "vcn_id" {
 }
 
 variable "subnet_ids" {
-  description = "List of subnet OCIDs for the OKE endpoint and node pool (from the networking module public_subnet_id)"
+  description = "Subnet OCIDs: [0]=public (cluster endpoint), [1]=private (node pool; OCI forbids node pools on the endpoint/service subnet)"
   type        = list(string)
 }
 
@@ -51,7 +51,7 @@ variable "compartment_id" {
 }
 
 variable "availability_domain" {
-  description = "OCI availability domain for the single node pool placement"
+  description = "OCI availability domain for the single node pool placement (required by the provider; the underlying subnet is regional)"
   type        = string
 }
 
