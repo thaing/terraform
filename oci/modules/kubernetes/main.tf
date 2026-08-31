@@ -11,14 +11,62 @@ locals {
     managed_by  = "opentofu"
   })
 
-  # D-41/D-42: size tier -> OKE node shape config. small/medium stay at 1 OCPU/6 GB so a single
-  # A1 node pool remains within the OCI Always Free ARM cap of 2 OCPU / 12 GB total (RESEARCH §3,
-  # post-June-2026 reduction) even alongside other A1 compute. Only large uses the full cap.
+  # Shape configs: A1.Flex is flexible (OCPU/memory configurable); E2.1 is fixed (1 OCPU/1 GB).
+  # small/medium/large tiers map to A1.Flex sizes within the Always Free 2 OCPU / 12 GB cap.
+  # For E2.1, size is ignored (fixed shape); for other shapes, small=1/6, medium=1/6, large=2/12.
   shape_config = {
-    small  = { ocpus = 1, memory_in_gbs = 6 }
-    medium = { ocpus = 1, memory_in_gbs = 6 }
-    large  = { ocpus = 2, memory_in_gbs = 12 }
+    "VM.Standard.A1.Flex" = {
+      small  = { ocpus = 1, memory_in_gbs = 6 }
+      medium = { ocpus = 1, memory_in_gbs = 6 }
+      large  = { ocpus = 2, memory_in_gbs = 12 }
+    }
+    "VM.Standard.E2.1" = {
+      small  = { ocpus = 1, memory_in_gbs = 1 }
+      medium = { ocpus = 1, memory_in_gbs = 1 }
+      large  = { ocpus = 1, memory_in_gbs = 1 }
+    }
+    "VM.Standard.E2.2" = {
+      small  = { ocpus = 1, memory_in_gbs = 15 }
+      medium = { ocpus = 1, memory_in_gbs = 15 }
+      large  = { ocpus = 2, memory_in_gbs = 30 }
+    }
+    "VM.Standard.E2.4" = {
+      small  = { ocpus = 2, memory_in_gbs = 30 }
+      medium = { ocpus = 2, memory_in_gbs = 30 }
+      large  = { ocpus = 4, memory_in_gbs = 60 }
+    }
+    "VM.Standard.E2.8" = {
+      small  = { ocpus = 4, memory_in_gbs = 60 }
+      medium = { ocpus = 4, memory_in_gbs = 60 }
+      large  = { ocpus = 8, memory_in_gbs = 120 }
+    }
+    "VM.Standard.E3.Flex" = {
+      small  = { ocpus = 1, memory_in_gbs = 6 }
+      medium = { ocpus = 1, memory_in_gbs = 6 }
+      large  = { ocpus = 2, memory_in_gbs = 12 }
+    }
+    "VM.Standard.E4.Flex" = {
+      small  = { ocpus = 1, memory_in_gbs = 6 }
+      medium = { ocpus = 1, memory_in_gbs = 6 }
+      large  = { ocpus = 2, memory_in_gbs = 12 }
+    }
+    "VM.Standard.E5.Flex" = {
+      small  = { ocpus = 1, memory_in_gbs = 6 }
+      medium = { ocpus = 1, memory_in_gbs = 6 }
+      large  = { ocpus = 2, memory_in_gbs = 12 }
+    }
+    "VM.Standard.E6.Flex" = {
+      small  = { ocpus = 1, memory_in_gbs = 6 }
+      medium = { ocpus = 1, memory_in_gbs = 6 }
+      large  = { ocpus = 2, memory_in_gbs = 12 }
+    }
   }
+
+  # Effective shape config for the selected node_shape, falling back to A1.Flex defaults.
+  effective_shape_config = lookup(local.shape_config, var.node_shape, local.shape_config["VM.Standard.A1.Flex"])
+
+  # Shapes that support node_shape_config (Flex shapes). Fixed shapes like E2.1 don't.
+  is_flex_shape = contains(["VM.Standard.A1.Flex", "VM.Standard.E3.Flex", "VM.Standard.E4.Flex", "VM.Standard.E5.Flex", "VM.Standard.E6.Flex", "VM.Standard.E2.2", "VM.Standard.E2.4", "VM.Standard.E2.8"], var.node_shape)
 
   # Pin the OKE Kubernetes version when var.k8s_version is set; otherwise use the newest
   # version OKE reports for the region (kubernetes_versions is returned newest-first by the API).
@@ -28,12 +76,28 @@ locals {
   # node images by their OKE version prefix in source_name.
   cluster_major_minor = replace(local.kubernetes_version, "/^v?(\\d+\\.\\d+).*$/", "$1")
 
-  # Filter sources to images whose source_name contains the cluster's major.minor OKE version.
-  # source_name format: "Oracle-Linux-9.8-aarch64-2026.08.14-0-OKE-1.33.10-1699"
-  matching_sources = [for s in data.oci_containerengine_node_pool_option.oke.sources : s if strcontains(s.source_name, "OKE-${local.cluster_major_minor}")]
+  # Determine if we need ARM (aarch64) or x86_64 image based on node_shape.
+  is_arm_shape = var.node_shape == "VM.Standard.A1.Flex"
+
+  # Filter sources to images matching the cluster's major.minor OKE version AND architecture.
+  # source_name format: "Oracle-Linux-9.8-aarch64-2026.08.14-0-OKE-1.33.10-1699" (ARM)
+  #                   "Oracle-Linux-9.8-2026.08.14-0-OKE-1.33.10-1699" (x86_64)
+  # Exclude GPU images for both architectures.
+  matching_sources = [for s in data.oci_containerengine_node_pool_option.oke.sources : s
+    if strcontains(s.source_name, "OKE-${local.cluster_major_minor}")
+    && !strcontains(s.source_name, "GPU")
+    && (local.is_arm_shape ? strcontains(s.source_name, "aarch64") : !strcontains(s.source_name, "aarch64"))]
+
+  # Debug: use a specific known-good image for x86 shapes if matching fails
+  x86_candidates = [for s in data.oci_containerengine_node_pool_option.oke.sources : s
+    if strcontains(s.source_name, "OKE-${local.cluster_major_minor}")
+    && !strcontains(s.source_name, "aarch64")
+    && strcontains(s.source_name, "Oracle-Linux-9.8-")
+    && !strcontains(s.source_name, "GPU")]
+  fallback_x86_image = length(local.x86_candidates) > 0 ? local.x86_candidates[0].image_id : data.oci_containerengine_node_pool_option.oke.sources[0].image_id
 
   # Use the first matching image; extract its exact OKE version for the node pool kubernetes_version.
-  node_image_id      = length(local.matching_sources) > 0 ? local.matching_sources[0].image_id : data.oci_containerengine_node_pool_option.oke.sources[0].image_id
+  node_image_id      = length(local.matching_sources) > 0 ? local.matching_sources[0].image_id : (local.is_arm_shape ? data.oci_containerengine_node_pool_option.oke.sources[0].image_id : local.fallback_x86_image)
   node_pool_version  = length(local.matching_sources) > 0 ? "v${regex("OKE-([\\d.]+)-", local.matching_sources[0].source_name)[0]}" : local.kubernetes_version
 }
 
@@ -79,11 +143,14 @@ resource "oci_containerengine_node_pool" "this" {
   compartment_id     = var.compartment_id
   name               = "${var.project}-${var.environment}-pool"
   kubernetes_version = local.node_pool_version
-  node_shape         = "VM.Standard.A1.Flex"
+  node_shape         = var.node_shape
 
-  node_shape_config {
-    ocpus         = local.shape_config[var.size].ocpus
-    memory_in_gbs = local.shape_config[var.size].memory_in_gbs
+  dynamic "node_shape_config" {
+    for_each = local.is_flex_shape ? [1] : []
+    content {
+      ocpus         = local.effective_shape_config[var.size].ocpus
+      memory_in_gbs = local.effective_shape_config[var.size].memory_in_gbs
+    }
   }
 
   # Modern placement form (node_config_details replaces the deprecated subnet_ids list);

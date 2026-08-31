@@ -60,8 +60,19 @@ variable "public_key_openssh" {
   type        = string
 }
 
-variable "k8s_version" {
-  description = "OKE Kubernetes version. Leave default (\"\") to use the newest version OKE offers for the region, or pin to a current stable version per OKE docs."
+variable "node_shape" {
+  description = "OCI compute shape for node pool. Use VM.Standard.A1.Flex for ARM Always Free (2 OCPU/12 GB cap) or VM.Standard.E2.1 for x86 Always Free (2×1 OCPU/1 GB). Paid shapes also allowed."
   type        = string
-  default     = ""
+  default     = "VM.Standard.E2.1"
+
+  validation {
+    condition     = contains(["VM.Standard.A1.Flex", "VM.Standard.E2.1", "VM.Standard.E2.2", "VM.Standard.E2.4", "VM.Standard.E2.8", "VM.Standard.E3.Flex", "VM.Standard.E4.Flex", "VM.Standard.E5.Flex", "VM.Standard.E6.Flex"], var.node_shape)
+    error_message = "Unsupported node_shape. Choose from ARM Always Free (VM.Standard.A1.Flex), x86 Always Free (VM.Standard.E2.1), or common paid Flex/E2 shapes."
+  }
+}
+
+variable "k8s_version" {
+  description = "OKE Kubernetes version. Leave default to use v1.34.10 (latest v1.34 patch), or pin to a current stable version per OKE docs."
+  type        = string
+  default     = "v1.34.10"
 }
