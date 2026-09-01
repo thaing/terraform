@@ -72,7 +72,7 @@ variable "node_shape" {
 }
 
 variable "k8s_version" {
-  description = "OKE Kubernetes version. Leave default to use v1.34.10 (latest v1.34 patch), or pin to a current stable version per OKE docs."
+  description = "OKE Kubernetes version. Leave default to use v1.35.2 (latest v1.35 patch), or pin to a current stable version per OKE docs."
   type        = string
-  default     = "v1.34.10"
+  default     = "v1.35.2"
 }
