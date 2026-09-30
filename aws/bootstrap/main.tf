@@ -14,7 +14,7 @@ module "state_bucket" {
   source  = "terraform-aws-modules/s3-bucket/aws"
   version = "5.16.1"
 
-  bucket = "${var.project}-tf-state"
+  bucket = "x-${var.project}-tf-state"
   tags   = local.common_tags
 
   versioning = {
