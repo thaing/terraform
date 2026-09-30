@@ -18,3 +18,18 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "cost_alert_amount" {
+  description = "Dollar amount (USD) of the monthly cost budget. Alerts when forecasted spend is projected to exceed this."
+  type        = number
+
+  validation {
+    condition     = var.cost_alert_amount > 0
+    error_message = "cost_alert_amount must be a positive dollar amount."
+  }
+}
+
+variable "alert_email" {
+  description = "Email address that receives cost-budget alerts"
+  type        = string
+}

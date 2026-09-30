@@ -6,7 +6,6 @@ locals {
   common_tags = merge(var.tags, {
     project    = var.project
     managed_by = "opentofu"
-    Repository = "https://github.com/terraform-aws-modules/terraform-aws-s3-bucket"
   })
 }
 
@@ -47,4 +46,31 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "state" {
       sse_algorithm = "AES256"
     }
   }
+}
+
+# Create budget alerts here
+module "budget" {
+  source            = "../modules/budget"
+  project           = var.project
+  tags              = local.common_tags
+  budget_name       = "${var.project}-total-cost"
+  cost_alert_amount = var.cost_alert_amount
+  alert_email       = var.alert_email
+}
+
+module "ec2_budget" {
+  source            = "../modules/budget"
+  project           = var.project
+  tags              = local.common_tags
+  budget_name       = "${var.project}-ec2-cost"
+  cost_alert_amount = var.cost_alert_amount
+  alert_email       = var.alert_email
+
+  # Example to filter a service
+  cost_filter = {
+    name   = "Service"
+    values = ["Amazon Elastic Compute Cloud - Compute"]
+  }
+  # Change it to true or comment out to create this budget alerts
+  create_budget = false
 }
