@@ -13,3 +13,8 @@ output "private_subnet_ids" {
   description = "IDs of the private subnets"
   value       = module.vpc.private_subnet_ids
 }
+
+output "ssh_sg_id" {
+  description = "ID of the SSH security group"
+  value       = module.ssh_sg.security_group_id
+}
